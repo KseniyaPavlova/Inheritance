@@ -1,4 +1,4 @@
-#include<iostream>
+ï»¿#include<iostream>
 #include<string>
 using std::cin;
 using std::cout;
@@ -126,7 +126,7 @@ public:
 	void print()const
 	{
 		Human::print();
-		cout <<"Ñïåöèàëüíîñòü: "<< speciality + " " +"Ãðóïïà: " +group << " " << "Êóðñ: " << year << " " << "Ðåéòèíã: " << rating << " " << "Ïîñåùàåìîñòü: " << attendance << endl;
+		cout <<"Ð¡Ð¿ÐµÑ†Ð¸Ð°Ð»ÑŒÐ½Ð¾ÑÑ‚ÑŒ: "<< speciality + " " +"Ð“Ñ€ÑƒÐ¿Ð¿Ð°: " +group << " " << "ÐšÑƒÑ€Ñ: " << year << " " << "Ð ÐµÐ¹Ñ‚Ð¸Ð½Ð³: " << rating << " " << "ÐŸÐ¾ÑÐµÑ‰Ð°ÐµÐ¼Ð¾ÑÑ‚ÑŒ: " << attendance << endl;
 	}
 };
 
@@ -171,7 +171,7 @@ public:
 	void print()const
 	{
 		Human::print();
-		cout << "Ñïåöèàëüíîñòü: " << speciality + " " << "Îïûò: " << experience << endl;
+		cout << "Ð¡Ð¿ÐµÑ†Ð¸Ð°Ð»ÑŒÐ½Ð¾ÑÑ‚ÑŒ: " << speciality + " " << "ÐžÐ¿Ñ‹Ñ‚: " << experience << endl;
 	}
 };
 class Graduate :public Student
@@ -210,7 +210,7 @@ public:
 	void print()const
 	{
 		Student::print();
-		cout << "Òåìà äèïëîìà: " << diplom << endl;
+		cout << "Ð¢ÐµÐ¼Ð° Ð´Ð¸Ð¿Ð»Ð¾Ð¼Ð°: " << diplom << endl;
 	}
 };
 
@@ -226,6 +226,6 @@ void main()
 	Teacher teacher("Ivanov", "Ivan", 43, "Chemistry", 20);
 	teacher.print();
 
-	Graduate graduate("Sidorov", "Alexey", 22, "Programming", "WW_420", 4, 90, 45, "Ñ++");
+	Graduate graduate("Sidorov", "Alexey", 22, "Programming", "WW_420", 4, 90, 45, "Ð¡++");
 	graduate.print();
 }
