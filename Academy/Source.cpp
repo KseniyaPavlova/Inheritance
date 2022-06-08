@@ -4,6 +4,8 @@ using std::cin;
 using std::cout;
 using std::endl;
 
+#define HUMAN_TAKE_PARAMETERS const std::string last_name, const std::string& first_name, unsigned int age
+#define HUMAN_GIVE_PARAMETERS last_name, first_name, age
 class Human
 {
 protected:
@@ -37,7 +39,7 @@ public:
 	}
 
 	//					Consnructors:
-	Human(const std::string last_name, const std::string& first_name, unsigned int age)
+	Human(HUMAN_TAKE_PARAMETERS)
 	{
 		set_last_name(last_name);
 		set_first_name(first_name);
@@ -50,12 +52,14 @@ public:
 	}
 
 	//					Methods:
-	void print()const
+	virtual void print()const
 	{
 		cout << last_name << " " << first_name << " " << age << " years.\n";
 	}
 };
 
+#define STUDENT_TAKE_PARAMETERS const std::string& speciality, const std::string& group, unsigned int year, double rating, double attendance
+#define STUDENT_GIVE_PARAMETERS speciality, group, year, rating, attendance
 class Student :public Human
 {
 	std::string speciality;
@@ -105,11 +109,7 @@ public:
 		this->attendance = attendance;
 	}
 	//			Constructors:
-	Student
-	(
-		const std::string& last_name, const std::string& first_name,unsigned int age,
-		const std::string& speciality, const std::string& group, unsigned int year, double rating, double attendance
-	)	:Human(last_name, first_name, age)
+	Student(HUMAN_TAKE_PARAMETERS, STUDENT_TAKE_PARAMETERS) :Human(HUMAN_GIVE_PARAMETERS)
 	{
 		set_speciality(speciality);
 		set_group(group);
@@ -126,7 +126,7 @@ public:
 	void print()const
 	{
 		Human::print();
-		cout <<"Специальность: "<< speciality + " " +"Группа: " +group << " " << "Курс: " << year << " " << "Рейтинг: " << rating << " " << "Посещаемость: " << attendance << endl;
+		cout << "Специальность: " << speciality + " " + "Группа: " + group << " " << "Курс: " << year << " " << "Рейтинг: " << rating << " " << "Посещаемость: " << attendance << endl;
 	}
 };
 
@@ -151,7 +151,7 @@ public:
 	{
 		this->experience = experience;
 	}
-	
+
 	//			Constructors:
 	Teacher
 	(
@@ -196,7 +196,7 @@ public:
 	) :Student
 	(
 		last_name, first_name, age,
-		speciality, group,year, rating,attendance
+		speciality, group, year, rating, attendance
 	)
 	{
 		set_diplom(diplom);
@@ -213,19 +213,38 @@ public:
 		cout << "Тема диплома: " << diplom << endl;
 	}
 };
-
+//#define INHERITANCE_CHECK
 void main()
 {
 	setlocale(LC_ALL, "");
+#ifdef INHERITANCE_CHECK
 	Human human("Montana", "Antonio", 25);
 	human.print();
 
 	Student pinkman("Pinkman", "Jessie", 23, "Chemistry", "WW_220", 1, 90, 85);
 	pinkman.print();
-	
+
 	Teacher teacher("Ivanov", "Ivan", 43, "Chemistry", 20);
 	teacher.print();
 
 	Graduate graduate("Sidorov", "Alexey", 22, "Programming", "WW_420", 4, 90, 45, "С++");
 	graduate.print();
+#endif // INHERITANCE_CHECK
+
+	Human* group[] =
+	{
+		new Student("Pinkman", "Jessie", 23, "Chemistry", "WW_220",1,90,95),
+		new Teacher("White", "Walter", 50, "Chemistry",25),
+		new Graduate("Schreder", "Hank", 40, "Criminalistics", "WW_220",5,95,80, "How to catch Heisenberg"),
+		new Student("Vercetti", "Tomas",30,"Theft","Vice",3,90,85),
+		new Teacher("Diaz", "Ricardo", 50, "Weapons distribution",20),
+		new Teacher("Einstein", "Albert",143,"Astronomy",100)
+	};
+
+	cout << "-----------------------------------------------------------\n";
+	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
+	{
+		group[i]->print();
+		cout << "-----------------------------------------------------------\n";
+	}
 }
