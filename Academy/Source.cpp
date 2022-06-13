@@ -40,6 +40,19 @@ void main()
 		cout << "-----------------------------------------------------------\n";
 	}
 
+	cout << "-----------------------------------------------------------\n";
+	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
+	{
+		//RITTI - Runtime Type Information
+		cout << typeid(*group[i]).name() << endl;
+		//group[i]->print();
+		//cout << *group[i] << endl;
+		if (typeid(*group[i]) == typeid(Teacher))cout << *dynamic_cast<Teacher*>(group[i]) << endl;
+		if (typeid(*group[i]) == typeid(Student))cout << *dynamic_cast<Student*>(group[i]) << endl;
+		if (typeid(*group[i]) == typeid(Graduate))cout << *dynamic_cast<Graduate*>(group[i]) << endl;
+		cout << "-----------------------------------------------------------\n";
+	}
+
 	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
 	{
 		delete group[i];

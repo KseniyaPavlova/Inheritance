@@ -1,5 +1,5 @@
-#include "Human.h"
-#include "Student.h"
+//#include "Human.h"
+#include "Graduate.h"
 class Graduate :public Student
 {
 	std::string diplom;
