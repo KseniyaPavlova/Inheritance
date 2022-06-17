@@ -63,7 +63,8 @@ public:
 		ofs.width(20);
 		ofs << std::left;
 		ofs << last_name + " " + first_name;
-		ofs<< age;
+		ofs.width(3);
+		ofs << age;
 		return ofs;
 	}
 };
@@ -151,7 +152,8 @@ public:
 	{
 		Human::print(ofs) << " ";
 		ofs.width(20);
-		ofs<<std::left;
+		ofs << std::left;
+		//ofs.width(22);
 		ofs << speciality;
 		ofs.width(8);
 		ofs << group << " " << year;
@@ -208,8 +210,13 @@ public:
 	}
 	std::ofstream& print(std::ofstream& ofs)const
 	{
-		Human::print(ofs);
-		ofs << speciality << " " << experience;
+		Human::print(ofs) << " ";
+		ofs.width(20);
+		ofs << std::left;
+		ofs << speciality;
+		ofs.width(10);
+		ofs << std::right;
+		ofs << experience;
 		return ofs;
 	}
 };
@@ -254,7 +261,8 @@ public:
 	}
 	std::ofstream& print(std::ofstream& ofs)const
 	{
-		Student::print(ofs)<< diplom;
+		Student::print(ofs) << " ";
+		ofs << diplom;
 		return ofs;
 	}
 };
@@ -295,7 +303,7 @@ void main()
 		//group[i]->print();
 		cout << *group[i] << endl;
 		cout << "-----------------------------------------------------------\n";
-		
+
 		fout << *group[i] << endl;
 	}
 	fout.close();
