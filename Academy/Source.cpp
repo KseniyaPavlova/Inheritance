@@ -63,11 +63,19 @@ public:
 		ofs.width(20);
 		ofs << std::left;
 		ofs << last_name + " " + first_name;
-		ofs.width(3);
+		ofs.width(4);
+		ofs << std::right;
 		ofs << age;
 		return ofs;
 	}
+	virtual std::ifstream& scan(std::ifstream& ifs)
+	{
+		std::string buffer;
+		ifs >> last_name >> first_name >> age;
+		return ifs;
+	}
 };
+
 
 std::ostream& operator<<(std::ostream& os, const Human& obj)
 {
@@ -76,6 +84,10 @@ std::ostream& operator<<(std::ostream& os, const Human& obj)
 std::ofstream& operator<<(std::ofstream& ofs, const Human& obj)
 {
 	return obj.print(ofs);
+}
+std::ifstream& operator>>(std::ifstream& ifs, Human& obj)
+{
+	return obj.scan(ifs);
 }
 
 #define STUDENT_TAKE_PARAMETERS const std::string& speciality, const std::string& group, unsigned int year, double rating, double attendance
@@ -160,8 +172,18 @@ public:
 		ofs.width(8);
 		ofs << std::right;
 		ofs << std::setprecision(2) << std::fixed;
-		ofs << rating << attendance;
+		ofs << rating << " " << attendance;
 		return ofs;
+	}
+	std::ifstream& scan(std::ifstream& ifs)
+	{
+		Human::scan(ifs);
+		ifs >> speciality;
+		ifs >> group;
+		ifs >> year;
+		ifs >> rating;
+		ifs >> attendance;
+		return ifs;
 	}
 };
 
@@ -211,13 +233,25 @@ public:
 	std::ofstream& print(std::ofstream& ofs)const
 	{
 		Human::print(ofs) << " ";
-		ofs.width(20);
+		ofs.width(25);
 		ofs << std::left;
 		ofs << speciality;
-		ofs.width(10);
+		ofs.width(5);
 		ofs << std::right;
 		ofs << experience;
 		return ofs;
+	}
+	std::ifstream& scan(std::ifstream& ifs)
+	{
+		Human::scan(ifs);
+		//ifs>>speciality;
+		const int n = 25;
+		char speciality[n] = {};
+		ifs.read(speciality, n);
+		for (int i = n - 1; speciality[i] == ' '; i--)speciality[i] = 0;
+		set_speciality(speciality);
+		ifs >> experience;
+		return ifs;
 	}
 };
 class Graduate :public Student
@@ -261,12 +295,68 @@ public:
 	}
 	std::ofstream& print(std::ofstream& ofs)const
 	{
-		Student::print(ofs) << " ";
-		ofs << diplom;
+		Student::print(ofs) << " " << diplom;
 		return ofs;
 	}
+	std::ifstream& scan(std::ifstream& ifs)
+	{
+		Student::scan(ifs);
+		std::getline(ifs, this->diplom);
+		return ifs;
+	}
 };
+
+Human* HumanFactory(const std::string& type)
+{
+	if (type.find("class Student") != std::string::npos)return new Student("", "", 0, "", "", 0, 0, 0);
+	if (type.find("class Graduate") != std::string::npos)return new Graduate("", "", 0, "", "", 0, 0, 0, "");
+	if (type.find("class Teacher") != std::string::npos)return new Teacher("", "", 0, "", 0);
+}
+
+Human** load(const std::string& filename, int& n)
+{
+	Human** group; //массив
+	//int n = 0; //размер массива
+	std::ifstream fin(filename);
+
+	if (fin.is_open())
+	{
+		std::string buffer;
+		// 1)Определяем размер массива:
+		while (!fin.eof())
+		{
+			std::getline(fin, buffer);
+			n++;
+		}
+		n--;
+		// 2) Выделяем память для участников группы (создаем массив)
+		group = new Human*[n] {};
+
+		// 3) Возвращаемся в начало файла
+		//cout << "Текущая позиция" << fin.tellg() << endl;
+		fin.clear();
+		fin.seekg(0);
+		//cout << "Текущая позиция" << fin.tellg() << endl;
+		for (int i = 0; i < n; i++)
+		{
+			std::getline(fin, buffer, ':');
+			group[i] = HumanFactory(buffer);
+			fin >> *group[i];
+		}
+	}
+	else
+	{
+		std::cerr << "Error: file not found" << endl;
+		return nullptr;
+	}
+
+	fin.close();
+	return group;
+
+}
+
 //#define INHERITANCE_CHECK
+//#define WRITE_TO_FILE
 void main()
 {
 	setlocale(LC_ALL, "");
@@ -284,6 +374,7 @@ void main()
 	graduate.print();
 #endif // INHERITANCE_CHECK
 
+#ifdef WRITE_TO_FILE
 	Human* group[] =
 	{
 		new Student("Pinkman", "Jessie", 23, "Chemistry", "WW_220",1,91.2,95),
@@ -291,7 +382,8 @@ void main()
 		new Graduate("Schreder", "Hank", 40, "Criminalistics", "WW_220",5,87.22,80, "How to catch Heisenberg"),
 		new Student("Vercetti", "Tomas",30,"Theft","Vice",3,90,85),
 		new Teacher("Diaz", "Ricardo", 50, "Weapons distribution",20),
-		new Teacher("Einstein", "Albert",143,"Astronomy",100)
+		new Teacher("Einstein", "Albert",143,"Astronomy",100),
+		new Teacher("Montana", "Antonio",30,"Criminalistics",3)
 	};
 
 	std::ofstream fout("Academy.txt");
@@ -304,12 +396,27 @@ void main()
 		cout << *group[i] << endl;
 		cout << "-----------------------------------------------------------\n";
 
+		fout << typeid(*group[i]).name() << ":\t";
 		fout << *group[i] << endl;
 	}
 	fout.close();
-	system("notepad Academy.txt");
+	system("start notepad Academy.txt");
 	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
 	{
 		delete group[i];
 	}
+#endif // WRITE_TO_FILE
+
+	int n = 0;
+	Human** group = load("Academy.txt", n);
+
+	for (int i = 0; i < n; i++)
+	{
+		cout << *group[i] << endl;
+	}
+	for (int i = 0; i < n; i++)
+	{
+		delete[] group[i];
+	}
+	delete[] group;
 }

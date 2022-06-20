@@ -5,9 +5,12 @@ using std::cin;
 using std::cout;
 using std::endl;
 
+//#define WRITE_TO_FILE
+
 void main()
 {
 	setlocale(LC_ALL, "");
+#ifdef WRITE_TO_FILE
 	const int SIZE = 256;
 	char sz_filename[SIZE] = {}; //sz_ - String Zero
 	cout << "Введите имя файла: ";
@@ -44,5 +47,27 @@ void main()
 	////	fout.open(name, std::ios_base::app);
 	////	fout << "Hello World!\n";
 	////	fout.close();
-	////	system("notepad File.txt");
+	////	system("notepad File.txt");  
+#endif // WRITE_TO_FILE
+
+	std::ifstream fin;
+	fin.open("File.txt");
+	if (fin.is_open())
+	{
+		//TODO read file
+		const int n = 256;
+		char buffer[n] = {};
+		while (!fin.eof()) //eof - end of file
+		{
+			//fin >> buffer;
+			fin.getline(buffer, n);
+			cout << buffer << endl;
+		}
+	}
+	else
+	{
+		std::cerr << "Error: file not found" << endl;
+	}
+	fin.close();
+	system("notepad File.txt");
 }
